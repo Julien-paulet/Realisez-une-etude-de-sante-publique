@@ -1,0 +1,120 @@
+Requêtes SQL : 
+
+Part 1 question 19 : 
+
+Ratio dispo_alim_kcal / Population
+
+
+SELECT 
+    pays,
+    round(sum("dispo_alim_kcal-p-j"), 2) as dispo_kcal
+FROM 
+    dispo_alim 
+GROUP BY pays
+ORDER BY dispo_kcal DESC
+LIMIT 10
+
+
+Ratio dispo_prot / Population
+
+SELECT 
+    pays,
+    round(sum(dispo_prot), 2) as dispo_prot
+FROM 
+    dispo_alim 
+GROUP BY pays
+ORDER BY dispo_prot DESC
+LIMIT 10
+
+
+--------------------------------------------------------------------------------------
+
+Part 2 Question 19 : 
+
+CREATE TEMPORARY TABLE dispo_alim_h (
+    Pays ,
+    Annee    INT,
+    Dispo_prot INT
+);
+
+INSERT INTO dispo_alim_h (Pays, Annee, Dispo_prot)
+SELECT 
+    pays,
+    annee,
+    round(sum(dispo_prot), 2) as dispo_prot
+FROM 
+    dispo_alim 
+WHERE annee = "2012"
+GROUP BY pays, annee
+ORDER BY dispo_prot
+LIMIT 10
+;
+
+INSERT INTO dispo_alim_h (Pays, Annee, Dispo_prot)
+SELECT 
+    pays,
+    annee,
+    round(sum(dispo_prot), 2) as dispo_prot
+FROM 
+    dispo_alim 
+WHERE annee = "2013"
+GROUP BY pays, annee
+ORDER BY dispo_prot
+LIMIT 10
+;
+
+SELECT * FROM dispo_alim_h
+
+--------------------------------------------------------------------------------------
+
+Part 3 Question 19 :
+ 
+SELECT  
+    pays,
+    annee,
+    sum(pertes) as pertes
+FROM 
+    equilibre_prod
+GROUP BY pays, annee
+
+--------------------------------------------------------------------------------------
+
+Part 4 Question 19 : 
+
+SELECT 
+    s.pays,
+    p.annee,
+    s.nb_personnes,
+    p.population,
+    round(nb_personnes/population*100, 2) as ratio
+FROM 
+    population p
+JOIN sous_nutrition s ON s.pays = p.pays AND s.annee = "2012-2014" AND p.annee = "2013"
+ORDER BY ratio DESC
+LIMIT 10
+
+
+--------------------------------------------------------------------------------------
+
+Part 5 Question 19 : 
+
+SELECT 
+    produit,
+    dispo_int,
+    autres_utilisations,
+    round(autres_utilisations/dispo_int*100, 2) as ratio
+FROM 
+    equilibre_prod
+WHERE annee = "2013"
+GROUP BY produit
+ORDER BY ratio DESC
+LIMIT 10
+
+/*Ici calculé sur l'année 2013 (dernière année dispo sur la FAO)*/
+
+--------------------------------------------------------------------------------------
+
+Question 20 : 
+
+/* Le premier produit "Alcool non comestible" est utilisé comme désinfectant, produit pour le ménage, l'industrie (comme le parfum par exemple), etc...*/
+/* Les huiles peuvent être utilisées pour des soins du corps (massages par exemple), en cosmétique (ex l'huilde de palme), ou encore pour fabriquer du carburant*/
